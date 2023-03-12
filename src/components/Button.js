@@ -6,11 +6,11 @@ import {
 } from 'react-native';
 import React, {useState} from 'react';
 import Animated, {useAnimatedStyle, withTiming} from 'react-native-reanimated';
-import {useNavigation} from '@react-navigation/native';
+
 const Button = ({text, pressHandler}) => {
   const {width} = useWindowDimensions();
   const [press, setPress] = useState(false);
-  const navigation = useNavigation();
+
   const animatedButtonStyle = useAnimatedStyle(() => {
     return {
       transform: [
@@ -44,7 +44,12 @@ const Button = ({text, pressHandler}) => {
 export default Button;
 
 const styles = StyleSheet.create({
-  button: {backgroundColor: '#C4E2FE', padding: 20, borderRadius: 19},
+  button: {
+    backgroundColor: '#C4E2FE',
+    padding: 20,
+    borderRadius: 19,
+    maxWidth: 400,
+  },
   textButton: {
     color: 'black',
     fontSize: 16,

@@ -18,7 +18,7 @@ import Button from '../components/Button';
 import {useNavigation} from '@react-navigation/native';
 import Geolocation from 'react-native-geolocation-service';
 const Onboarding = () => {
-  const {width} = useWindowDimensions();
+  const {width, height} = useWindowDimensions();
   const {next} = useCardAnimation();
   const navigation = useNavigation();
 
@@ -108,7 +108,7 @@ const Onboarding = () => {
           styles.bottom,
           {
             width: width * 0.9,
-            height: width * 0.9,
+            height: height * 0.4,
             transform: [{translateX: translateX}],
           },
         ]}>
@@ -134,12 +134,14 @@ const styles = StyleSheet.create({
   },
   image: {
     resizeMode: 'center',
+    maxWidth: 300,
   },
   bottom: {
     backgroundColor: 'white',
     borderRadius: 28,
     alignItems: 'center',
     justifyContent: 'space-around',
+    maxWidth: 500,
   },
   title: {
     color: 'black',
