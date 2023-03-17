@@ -93,7 +93,7 @@ const Onboarding = () => {
         barStyle="dark-content"
       />
       <Animated.Image
-        source={require('../assets/OnboardingImage.png')}
+        source={require('../assets/images/OnboardingImage.png')}
         style={[
           styles.image,
           {
