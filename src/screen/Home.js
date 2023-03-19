@@ -7,6 +7,7 @@ import {
   useWindowDimensions,
   Pressable,
   ActivityIndicator,
+  FlatList,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import React, {useEffect, useLayoutEffect, useState} from 'react';
@@ -17,7 +18,10 @@ import {OPENWEATHER_KEY, HEREMAP_KEY} from '@env';
 import {useNavigation} from '@react-navigation/native';
 import dayjs from 'dayjs';
 import getImage from '../utilities/getImage';
+import Card from '../components/Card';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 const Home = () => {
+  const insets = useSafeAreaInsets();
   const currentDate = dayjs().format('dddd, DD MMMM YYYY');
   const navigation = useNavigation();
   const {width} = useWindowDimensions();
@@ -30,6 +34,7 @@ const Home = () => {
     temp: 0,
     humid: 0,
   });
+  const [hourlyWeather, setHourlyWeather] = useState([]);
   useEffect(() => {
     Geolocation.getCurrentPosition(
       position => {
@@ -46,6 +51,7 @@ const Home = () => {
               humid: res.data.current.humidity,
             });
             setCurrentWeatherImage(res.data.current.weather[0].icon);
+            setHourlyWeather(res.data.hourly);
             setLoading(false);
           })
           .catch(err => {
@@ -75,6 +81,10 @@ const Home = () => {
       changeNavigationBarColor('#FFFFFF', true);
     }
   }, [loading]);
+
+  const renderItem = ({item, index}) => {
+    return <Card item={item} key={index} />;
+  };
 
   return (
     <SafeAreaView
@@ -116,7 +126,11 @@ const Home = () => {
               </View>
             </View>
           </View>
-          <View style={[styles.bottomContainer, {width: width}]}>
+          <View
+            style={[
+              styles.bottomContainer,
+              {width: width, paddingBottom: insets.bottom},
+            ]}>
             <View style={styles.wrapper}>
               <Text style={styles.text}>Today</Text>
               <Pressable
@@ -132,6 +146,12 @@ const Home = () => {
                 />
               </Pressable>
             </View>
+            <FlatList
+              data={hourlyWeather}
+              renderItem={renderItem}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+            />
           </View>
         </>
       )}
@@ -207,7 +227,9 @@ const styles = StyleSheet.create({
   wrapper: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 20,
+    paddingTop: 20,
+    paddingHorizontal: 20,
+    paddingBottom: 10,
   },
   nextButton: {
     justifyContent: 'center',
