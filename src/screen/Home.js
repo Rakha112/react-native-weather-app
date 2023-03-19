@@ -6,6 +6,7 @@ import {
   Image,
   useWindowDimensions,
   Pressable,
+  ActivityIndicator,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import React, {useEffect, useLayoutEffect, useState} from 'react';
@@ -84,48 +85,56 @@ const Home = () => {
         translucent={true}
         barStyle="dark-content"
       />
-      <View style={styles.topContainer}>
-        <View>
-          <Text style={styles.textDate}>{currentDate}</Text>
-          <Text style={styles.textCity}>{district}</Text>
+      {loading ? (
+        <View style={styles.loader}>
+          <ActivityIndicator size={'large'} color={'#C4E2FE'} />
         </View>
-        <Image
-          source={getImage[currentWeatherImage]}
-          style={[styles.image, {width: width * 0.7, height: width * 0.7}]}
-        />
-        <Text style={styles.textWeather}>{currentWeather}</Text>
-        <View style={[styles.infoContainer, {width: width * 0.9}]}>
-          <View style={styles.center}>
-            <Text style={styles.infoTitle}>Wind</Text>
-            <Text style={styles.infoText}>{currentInfo.wind}</Text>
-          </View>
-          <View style={styles.center}>
-            <Text style={styles.infoTitle}>Temp</Text>
-            <Text style={styles.infoText}>{currentInfo.temp}&deg;C</Text>
-          </View>
-          <View style={styles.center}>
-            <Text style={styles.infoTitle}>Humid</Text>
-            <Text style={styles.infoText}>{currentInfo.humid}%</Text>
-          </View>
-        </View>
-      </View>
-      <View style={[styles.bottomContainer, {width: width}]}>
-        <View style={styles.wrapper}>
-          <Text style={styles.text}>Today</Text>
-          <Pressable
-            style={styles.nextButton}
-            onPress={() => {
-              console.log('NEXT 7 DAYS');
-              navigation.navigate('NextDay');
-            }}>
-            <Text style={styles.text}>Next 7 Days</Text>
+      ) : (
+        <>
+          <View style={styles.topContainer}>
+            <View>
+              <Text style={styles.textDate}>{currentDate}</Text>
+              <Text style={styles.textCity}>{district}</Text>
+            </View>
             <Image
-              source={require('../assets/icons/ArrowIcon.png')}
-              style={styles.arrowIcon}
+              source={getImage[currentWeatherImage]}
+              style={[styles.image, {width: width * 0.7, height: width * 0.7}]}
             />
-          </Pressable>
-        </View>
-      </View>
+            <Text style={styles.textWeather}>{currentWeather}</Text>
+            <View style={[styles.infoContainer, {width: width * 0.9}]}>
+              <View style={styles.center}>
+                <Text style={styles.infoTitle}>Wind</Text>
+                <Text style={styles.infoText}>{currentInfo.wind}</Text>
+              </View>
+              <View style={styles.center}>
+                <Text style={styles.infoTitle}>Temp</Text>
+                <Text style={styles.infoText}>{currentInfo.temp}&deg;C</Text>
+              </View>
+              <View style={styles.center}>
+                <Text style={styles.infoTitle}>Humid</Text>
+                <Text style={styles.infoText}>{currentInfo.humid}%</Text>
+              </View>
+            </View>
+          </View>
+          <View style={[styles.bottomContainer, {width: width}]}>
+            <View style={styles.wrapper}>
+              <Text style={styles.text}>Today</Text>
+              <Pressable
+                style={styles.nextButton}
+                onPress={() => {
+                  console.log('NEXT 7 DAYS');
+                  navigation.navigate('NextDay');
+                }}>
+                <Text style={styles.text}>Next 7 Days</Text>
+                <Image
+                  source={require('../assets/icons/ArrowIcon.png')}
+                  style={styles.arrowIcon}
+                />
+              </Pressable>
+            </View>
+          </View>
+        </>
+      )}
     </SafeAreaView>
   );
 };
