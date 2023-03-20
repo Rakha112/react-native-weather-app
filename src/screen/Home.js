@@ -20,6 +20,7 @@ import dayjs from 'dayjs';
 import getImage from '../utilities/getImage';
 import Card from '../components/Card';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import Animated, {FadeOutLeft, FadeInRight} from 'react-native-reanimated';
 const Home = () => {
   const insets = useSafeAreaInsets();
   const currentDate = dayjs().format('dddd, DD MMMM YYYY');
@@ -78,12 +79,12 @@ const Home = () => {
 
   useLayoutEffect(() => {
     if (!loading) {
-      changeNavigationBarColor('#FFFFFF', true);
+      changeNavigationBarColor('#FFFFFF');
     }
   }, [loading]);
 
   const renderItem = ({item, index}) => {
-    return <Card item={item} key={index} />;
+    return <Card item={item} key={index} index={index} />;
   };
 
   return (
@@ -96,12 +97,16 @@ const Home = () => {
         barStyle="dark-content"
       />
       {loading ? (
-        <View style={styles.loader}>
+        <Animated.View
+          style={styles.loader}
+          exiting={FadeOutLeft.duration(500)}>
           <ActivityIndicator size={'large'} color={'#C4E2FE'} />
-        </View>
+        </Animated.View>
       ) : (
         <>
-          <View style={styles.topContainer}>
+          <Animated.View
+            style={styles.topContainer}
+            entering={FadeInRight.duration(500).delay(500)}>
             <View>
               <Text style={styles.textDate}>{currentDate}</Text>
               <Text style={styles.textCity}>{district}</Text>
@@ -125,8 +130,9 @@ const Home = () => {
                 <Text style={styles.infoText}>{currentInfo.humid}%</Text>
               </View>
             </View>
-          </View>
-          <View
+          </Animated.View>
+          <Animated.View
+            entering={FadeInRight.duration(500).delay(700)}
             style={[
               styles.bottomContainer,
               {width: width, paddingBottom: insets.bottom},
@@ -152,7 +158,7 @@ const Home = () => {
               horizontal
               showsHorizontalScrollIndicator={false}
             />
-          </View>
+          </Animated.View>
         </>
       )}
     </SafeAreaView>
