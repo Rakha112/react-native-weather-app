@@ -8,9 +8,11 @@ import {
   Pressable,
   ActivityIndicator,
   FlatList,
+  ScrollView,
+  RefreshControl,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import React, {useEffect, useLayoutEffect, useState} from 'react';
+import React, {useEffect, useLayoutEffect, useState, useCallback} from 'react';
 import Geolocation from 'react-native-geolocation-service';
 import axios from 'axios';
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
@@ -36,6 +38,8 @@ const Home = () => {
     humid: 0,
   });
   const [hourlyWeather, setHourlyWeather] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+
   useEffect(() => {
     Geolocation.getCurrentPosition(
       position => {
@@ -83,6 +87,48 @@ const Home = () => {
     }
   }, [loading]);
 
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    Geolocation.getCurrentPosition(
+      position => {
+        // GET WEATHER DATA FROM OPENWEATHERMAP.ORG
+        axios
+          .get(
+            `https://api.openweathermap.org/data/2.5/onecall?lat=${position.coords.latitude}&lon=${position.coords.longitude}&appid=${OPENWEATHER_KEY}&units=metric`,
+          )
+          .then(res => {
+            setCurrentWeather(res.data.current.weather[0].description);
+            setCurrentInfo({
+              wind: res.data.current.wind_speed,
+              temp: res.data.current.temp,
+              humid: res.data.current.humidity,
+            });
+            setCurrentWeatherImage(res.data.current.weather[0].icon);
+            setHourlyWeather(res.data.hourly);
+            setRefreshing(false);
+          })
+          .catch(err => {
+            console.log(err.response.data);
+          });
+        // REVERSE GEOCODING FROM HERE MAP
+        axios
+          .get(
+            `https://revgeocode.search.hereapi.com/v1/revgeocode?at=${position.coords.latitude},${position.coords.longitude}&lang=en-US&apiKey=${HEREMAP_KEY}`,
+          )
+          .then(res => {
+            setDistrict(res.data.items[0].address.district);
+          })
+          .catch(err => {
+            console.log(err.response.data);
+          });
+      },
+      error => {
+        console.log(error.code, error.message);
+      },
+      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+    );
+  }, []);
+
   const renderItem = ({item, index}) => {
     return <Card item={item} key={index} index={index} />;
   };
@@ -103,7 +149,18 @@ const Home = () => {
           <ActivityIndicator size={'large'} color={'#C4E2FE'} />
         </Animated.View>
       ) : (
-        <>
+        <ScrollView
+          // eslint-disable-next-line react-native/no-inline-styles
+          contentContainerStyle={{flex: 1}}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={['#C4E2FE']}
+              tintColor={'#C4E2FE'}
+            />
+          }
+          showsVerticalScrollIndicator={false}>
           <Animated.View
             style={styles.topContainer}
             entering={FadeInRight.duration(500).delay(500)}>
@@ -159,7 +216,7 @@ const Home = () => {
               showsHorizontalScrollIndicator={false}
             />
           </Animated.View>
-        </>
+        </ScrollView>
       )}
     </SafeAreaView>
   );
