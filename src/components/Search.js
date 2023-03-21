@@ -5,11 +5,11 @@ import {
   useWindowDimensions,
   Image,
 } from 'react-native';
-import React, {useState} from 'react';
+import React from 'react';
 
-const Search = ({searchHandle}) => {
+const Search = ({searchHandle, setCity, city}) => {
   const {width} = useWindowDimensions();
-  const [city, setCity] = useState('');
+
   return (
     <View style={[styles.container, {width: width * 0.9}]}>
       <Image
@@ -20,6 +20,7 @@ const Search = ({searchHandle}) => {
         placeholder="Search..."
         placeholderTextColor={'#505A7D'}
         style={styles.input}
+        defaultValue={city}
         onChangeText={e => setCity(e)}
         onSubmitEditing={() => {
           searchHandle(city);
