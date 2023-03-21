@@ -1,16 +1,34 @@
-import {StyleSheet} from 'react-native';
-import React from 'react';
+import React, {useRef} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import Onboarding from './src/screen/Onboarding';
 import Home from './src/screen/Home';
+import NextDay from './src/screen/NextDay';
+import Toast from './src/components/Toast';
 const App = () => {
+  const toastRef = useRef(null);
   const Stack = createStackNavigator();
-  const forFade = ({current}) => ({
+  const customTransition = ({current, next, layouts}) => ({
     cardStyle: {
-      opacity: current.progress,
+      transform: [
+        {
+          translateX: current.progress.interpolate({
+            inputRange: [0, 1],
+            outputRange: [layouts.screen.width, 0],
+          }),
+        },
+        {
+          translateX: next
+            ? next.progress.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0, -layouts.screen.width],
+              })
+            : 0,
+        },
+      ],
     },
   });
+
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Onboarding">
@@ -23,10 +41,22 @@ const App = () => {
         />
         <Stack.Screen
           name="Home"
-          component={Home}
           options={{
             headerShown: false,
-            cardStyleInterpolator: forFade,
+            cardStyleInterpolator: customTransition,
+            transitionSpec: {
+              close: {animation: 'timing', config: {duration: 500}},
+              open: {animation: 'timing', config: {duration: 500}},
+            },
+          }}>
+          {props => <Home {...props} toast={toastRef} />}
+        </Stack.Screen>
+        <Stack.Screen
+          name="NextDay"
+          component={NextDay}
+          options={{
+            headerShown: false,
+            cardStyleInterpolator: customTransition,
             transitionSpec: {
               close: {animation: 'timing', config: {duration: 500}},
               open: {animation: 'timing', config: {duration: 500}},
@@ -34,10 +64,9 @@ const App = () => {
           }}
         />
       </Stack.Navigator>
+      <Toast ref={toastRef} />
     </NavigationContainer>
   );
 };
 
 export default App;
-
-const styles = StyleSheet.create({});
