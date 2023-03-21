@@ -158,11 +158,6 @@ const Home = ({toast}) => {
               `https://api.openweathermap.org/data/2.5/onecall?lat=${res.data.coord.lat}&lon=${res.data.coord.lon}&appid=${OPENWEATHER_KEY}&units=metric`,
             )
             .then(response => {
-              toast.current.show({
-                type: 'success',
-                text: 'Success',
-                duration: 2000,
-              });
               setDistrict(res.data.name);
               setCity('');
               setDailyWeather(res.data.daily);
