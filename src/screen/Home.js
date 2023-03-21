@@ -23,11 +23,13 @@ import getImage from '../utilities/getImage';
 import Card from '../components/Card';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Animated, {FadeOutLeft, FadeInRight} from 'react-native-reanimated';
-const Home = () => {
+import Search from '../components/Search';
+const Home = ({toast}) => {
   const insets = useSafeAreaInsets();
   const currentDate = dayjs().format('dddd, DD MMMM YYYY');
   const navigation = useNavigation();
   const {width} = useWindowDimensions();
+  const [city, setCity] = useState('');
   const [loading, setLoading] = useState(true);
   const [district, setDistrict] = useState('');
   const [currentWeather, setCurrentWeather] = useState('');
@@ -38,6 +40,7 @@ const Home = () => {
     humid: 0,
   });
   const [hourlyWeather, setHourlyWeather] = useState([]);
+  const [dailyWeather, setDailyWeather] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
@@ -49,6 +52,7 @@ const Home = () => {
             `https://api.openweathermap.org/data/2.5/onecall?lat=${position.coords.latitude}&lon=${position.coords.longitude}&appid=${OPENWEATHER_KEY}&units=metric`,
           )
           .then(res => {
+            setDailyWeather(res.data.daily);
             setCurrentWeather(res.data.current.weather[0].description);
             setCurrentInfo({
               wind: res.data.current.wind_speed,
@@ -97,6 +101,8 @@ const Home = () => {
             `https://api.openweathermap.org/data/2.5/onecall?lat=${position.coords.latitude}&lon=${position.coords.longitude}&appid=${OPENWEATHER_KEY}&units=metric`,
           )
           .then(res => {
+            setCity('');
+            setDailyWeather(res.data.daily);
             setCurrentWeather(res.data.current.weather[0].description);
             setCurrentInfo({
               wind: res.data.current.wind_speed,
@@ -132,7 +138,58 @@ const Home = () => {
   const renderItem = ({item, index}) => {
     return <Card item={item} key={index} index={index} />;
   };
-
+  const searchHandle = () => {
+    if (city === '') {
+      toast.current.show({
+        type: 'warning',
+        text: 'Please enter the city name',
+        duration: 2000,
+      });
+    } else {
+      // GET LAT AND LON FROM CITY NAME
+      axios
+        .get(
+          `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${OPENWEATHER_KEY}&units=metric`,
+        )
+        .then(res => {
+          // GET WEATHER FROM LAT AND LON
+          axios
+            .get(
+              `https://api.openweathermap.org/data/2.5/onecall?lat=${res.data.coord.lat}&lon=${res.data.coord.lon}&appid=${OPENWEATHER_KEY}&units=metric`,
+            )
+            .then(response => {
+              toast.current.show({
+                type: 'success',
+                text: 'Success',
+                duration: 2000,
+              });
+              setDistrict(res.data.name);
+              setCity('');
+              setDailyWeather(res.data.daily);
+              setCurrentWeather(response.data.current.weather[0].description);
+              setCurrentInfo({
+                wind: response.data.current.wind_speed,
+                temp: response.data.current.temp,
+                humid: response.data.current.humidity,
+              });
+              setCurrentWeatherImage(response.data.current.weather[0].icon);
+              setHourlyWeather(response.data.hourly);
+            })
+            .catch(err => {
+              console.log(err.response.data);
+            });
+        })
+        .catch(err => {
+          if (err.response.status === 404) {
+            toast.current.show({
+              type: 'error',
+              text: 'City not found',
+              duration: 2000,
+            });
+          }
+        });
+    }
+  };
   return (
     <SafeAreaView
       style={loading ? styles.containerLoader : styles.container}
@@ -164,6 +221,7 @@ const Home = () => {
           <Animated.View
             style={styles.topContainer}
             entering={FadeInRight.duration(500).delay(500)}>
+            <Search searchHandle={searchHandle} setCity={setCity} city={city} />
             <View>
               <Text style={styles.textDate}>{currentDate}</Text>
               <Text style={styles.textCity}>{district}</Text>
@@ -199,8 +257,9 @@ const Home = () => {
               <Pressable
                 style={styles.nextButton}
                 onPress={() => {
-                  console.log('NEXT 7 DAYS');
-                  navigation.navigate('NextDay');
+                  navigation.navigate('NextDay', {
+                    dailyWeather: dailyWeather,
+                  });
                 }}>
                 <Text style={styles.text}>Next 7 Days</Text>
                 <Image
