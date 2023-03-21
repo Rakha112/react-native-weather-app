@@ -4,34 +4,25 @@ import {
   View,
   StatusBar,
   useWindowDimensions,
-  Animated,
   PermissionsAndroid,
   Alert,
   Linking,
   Platform,
+  Image,
 } from 'react-native';
 import React, {useLayoutEffect} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import changeNavigationBarColor from 'react-native-navigation-bar-color';
-import {useCardAnimation} from '@react-navigation/stack';
 import Button from '../components/Button';
 import {useNavigation} from '@react-navigation/native';
 import Geolocation from 'react-native-geolocation-service';
 const Onboarding = () => {
   const {width, height} = useWindowDimensions();
-  const {next} = useCardAnimation();
   const navigation = useNavigation();
 
   useLayoutEffect(() => {
     changeNavigationBarColor('#C4E2FE', true, false);
   }, []);
-
-  const translateX =
-    next?.progress.interpolate({
-      inputRange: [0, 1],
-      outputRange: [0, -width],
-      extrapolate: 'clamp',
-    }) ?? 0;
 
   const pressHandler = async () => {
     if (Platform.OS === 'android') {
@@ -92,24 +83,22 @@ const Onboarding = () => {
         translucent={true}
         barStyle="dark-content"
       />
-      <Animated.Image
+      <Image
         source={require('../assets/images/OnboardingImage.png')}
         style={[
           styles.image,
           {
             width: width * 0.7,
             height: width * 0.7,
-            transform: [{translateX: translateX}],
           },
         ]}
       />
-      <Animated.View
+      <View
         style={[
           styles.bottom,
           {
             width: width * 0.9,
             height: height * 0.4,
-            transform: [{translateX: translateX}],
           },
         ]}>
         <View>
@@ -118,7 +107,7 @@ const Onboarding = () => {
           <Text style={styles.text}>and around the world</Text>
         </View>
         <Button text={'Get Started'} pressHandler={pressHandler} />
-      </Animated.View>
+      </View>
     </SafeAreaView>
   );
 };
