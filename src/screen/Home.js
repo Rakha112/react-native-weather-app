@@ -27,18 +27,10 @@ const Home = ({toast}) => {
   const currentDate = dayjs().format('dddd, DD MMMM YYYY');
   const navigation = useNavigation();
   const {width} = useWindowDimensions();
-  const [city, setCity] = useState('');
+  const [searchCity, setSearchCity] = useState('');
   const [loading, setLoading] = useState(true);
   const [district, setDistrict] = useState('');
-  const [currentWeather, setCurrentWeather] = useState('');
-  const [currentWeatherImage, setCurrentWeatherImage] = useState('01d');
-  const [currentInfo, setCurrentInfo] = useState({
-    wind: 0,
-    temp: 0,
-    humid: 0,
-  });
-  const [hourlyWeather, setHourlyWeather] = useState([]);
-  const [dailyWeather, setDailyWeather] = useState([]);
+  const [weather, setWeather] = useState({});
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
@@ -50,15 +42,7 @@ const Home = ({toast}) => {
             `https://api.openweathermap.org/data/2.5/onecall?lat=${position.coords.latitude}&lon=${position.coords.longitude}&appid=${OPENWEATHER_KEY}&units=metric`,
           )
           .then(res => {
-            setDailyWeather(res.data.daily);
-            setCurrentWeather(res.data.current.weather[0].description);
-            setCurrentInfo({
-              wind: res.data.current.wind_speed,
-              temp: res.data.current.temp,
-              humid: res.data.current.humidity,
-            });
-            setCurrentWeatherImage(res.data.current.weather[0].icon);
-            setHourlyWeather(res.data.hourly);
+            setWeather(res.data);
             setLoading(false);
           })
           .catch(err => {
@@ -99,16 +83,8 @@ const Home = ({toast}) => {
             `https://api.openweathermap.org/data/2.5/onecall?lat=${position.coords.latitude}&lon=${position.coords.longitude}&appid=${OPENWEATHER_KEY}&units=metric`,
           )
           .then(res => {
-            setCity('');
-            setDailyWeather(res.data.daily);
-            setCurrentWeather(res.data.current.weather[0].description);
-            setCurrentInfo({
-              wind: res.data.current.wind_speed,
-              temp: res.data.current.temp,
-              humid: res.data.current.humidity,
-            });
-            setCurrentWeatherImage(res.data.current.weather[0].icon);
-            setHourlyWeather(res.data.hourly);
+            setSearchCity('');
+            setWeather(res.data);
             setRefreshing(false);
           })
           .catch(err => {
@@ -137,7 +113,7 @@ const Home = ({toast}) => {
     return <Card item={item} key={index} index={index} />;
   };
   const searchHandle = () => {
-    if (city === '') {
+    if (searchCity === '') {
       toast.current.show({
         type: 'warning',
         text: 'Please enter the city name',
@@ -147,7 +123,7 @@ const Home = ({toast}) => {
       // GET LAT AND LON FROM CITY NAME
       axios
         .get(
-          `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${OPENWEATHER_KEY}&units=metric`,
+          `https://api.openweathermap.org/data/2.5/weather?q=${searchCity}&appid=${OPENWEATHER_KEY}&units=metric`,
         )
         .then(res => {
           // GET WEATHER FROM LAT AND LON
@@ -157,16 +133,8 @@ const Home = ({toast}) => {
             )
             .then(response => {
               setDistrict(res.data.name);
-              setCity('');
-              setDailyWeather(res.data.daily);
-              setCurrentWeather(response.data.current.weather[0].description);
-              setCurrentInfo({
-                wind: response.data.current.wind_speed,
-                temp: response.data.current.temp,
-                humid: response.data.current.humidity,
-              });
-              setCurrentWeatherImage(response.data.current.weather[0].icon);
-              setHourlyWeather(response.data.hourly);
+              setSearchCity('');
+              setWeather(response.data);
             })
             .catch(err => {
               console.log(err.response.data);
@@ -206,28 +174,38 @@ const Home = ({toast}) => {
           }
           showsVerticalScrollIndicator={false}>
           <View style={styles.topContainer}>
-            <Search searchHandle={searchHandle} setCity={setCity} city={city} />
+            <Search
+              searchHandle={searchHandle}
+              setCity={setSearchCity}
+              city={searchCity}
+            />
             <View>
               <Text style={styles.textDate}>{currentDate}</Text>
               <Text style={styles.textCity}>{district}</Text>
             </View>
             <Image
-              source={getImage[currentWeatherImage]}
+              source={getImage[weather.current.weather[0].icon]}
               style={[styles.image, {width: width * 0.7, height: width * 0.7}]}
             />
-            <Text style={styles.textWeather}>{currentWeather}</Text>
+            <Text style={styles.textWeather}>
+              {weather.current.weather[0].description}
+            </Text>
             <View style={[styles.infoContainer, {width: width * 0.9}]}>
               <View style={styles.center}>
                 <Text style={styles.infoTitle}>Wind</Text>
-                <Text style={styles.infoText}>{currentInfo.wind}</Text>
+                <Text style={styles.infoText}>
+                  {weather.current.wind_speed}
+                </Text>
               </View>
               <View style={styles.center}>
                 <Text style={styles.infoTitle}>Temp</Text>
-                <Text style={styles.infoText}>{currentInfo.temp}&deg;C</Text>
+                <Text style={styles.infoText}>
+                  {weather.current.temp}&deg;C
+                </Text>
               </View>
               <View style={styles.center}>
                 <Text style={styles.infoTitle}>Humid</Text>
-                <Text style={styles.infoText}>{currentInfo.humid}%</Text>
+                <Text style={styles.infoText}>{weather.current.humidity}%</Text>
               </View>
             </View>
           </View>
@@ -242,7 +220,7 @@ const Home = ({toast}) => {
                 style={styles.nextButton}
                 onPress={() => {
                   navigation.navigate('NextDay', {
-                    dailyWeather: dailyWeather,
+                    dailyWeather: weather.daily,
                   });
                 }}>
                 <Text style={styles.text}>Next 7 Days</Text>
@@ -253,7 +231,7 @@ const Home = ({toast}) => {
               </Pressable>
             </View>
             <FlatList
-              data={hourlyWeather}
+              data={weather.hourly}
               renderItem={renderItem}
               horizontal
               showsHorizontalScrollIndicator={false}
