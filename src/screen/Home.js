@@ -7,7 +7,6 @@ import {
   Pressable,
   ActivityIndicator,
   FlatList,
-  ScrollView,
   RefreshControl,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -21,7 +20,7 @@ import dayjs from 'dayjs';
 import getImage from '../utilities/getImage';
 import Card from '../components/Card';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import Animated, {FadeOut, FadeInRight} from 'react-native-reanimated';
+import Animated, {FadeOut, SlideInRight} from 'react-native-reanimated';
 import Search from '../components/Search';
 const Home = ({toast}) => {
   const insets = useSafeAreaInsets();
@@ -193,9 +192,10 @@ const Home = ({toast}) => {
           <ActivityIndicator size={'large'} color={'#C4E2FE'} />
         </Animated.View>
       ) : (
-        <ScrollView
+        <Animated.ScrollView
           // eslint-disable-next-line react-native/no-inline-styles
           contentContainerStyle={{flex: 1}}
+          entering={SlideInRight.duration(500).delay(500)}
           refreshControl={
             <RefreshControl
               refreshing={refreshing}
@@ -205,9 +205,7 @@ const Home = ({toast}) => {
             />
           }
           showsVerticalScrollIndicator={false}>
-          <Animated.View
-            style={styles.topContainer}
-            entering={FadeInRight.duration(500).delay(500)}>
+          <View style={styles.topContainer}>
             <Search searchHandle={searchHandle} setCity={setCity} city={city} />
             <View>
               <Text style={styles.textDate}>{currentDate}</Text>
@@ -232,9 +230,8 @@ const Home = ({toast}) => {
                 <Text style={styles.infoText}>{currentInfo.humid}%</Text>
               </View>
             </View>
-          </Animated.View>
-          <Animated.View
-            entering={FadeInRight.duration(500).delay(700)}
+          </View>
+          <View
             style={[
               styles.bottomContainer,
               {width: width, paddingBottom: insets.bottom},
@@ -261,8 +258,8 @@ const Home = ({toast}) => {
               horizontal
               showsHorizontalScrollIndicator={false}
             />
-          </Animated.View>
-        </ScrollView>
+          </View>
+        </Animated.ScrollView>
       )}
     </SafeAreaView>
   );
