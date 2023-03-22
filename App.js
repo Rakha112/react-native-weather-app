@@ -1,4 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
+import {StatusBar} from 'react-native';
 import React, {useRef} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -33,6 +34,11 @@ const App = () => {
 
   return (
     <GestureHandlerRootView style={{flex: 1}}>
+      <StatusBar
+        backgroundColor="transparent"
+        translucent={true}
+        barStyle="dark-content"
+      />
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Onboarding">
           <Stack.Screen

@@ -2,7 +2,6 @@ import {
   StyleSheet,
   Text,
   View,
-  StatusBar,
   useWindowDimensions,
   PermissionsAndroid,
   Alert,
@@ -78,11 +77,6 @@ const Onboarding = () => {
   };
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar
-        backgroundColor="transparent"
-        translucent={true}
-        barStyle="dark-content"
-      />
       <Image
         source={require('../assets/images/OnboardingImage.png')}
         style={[

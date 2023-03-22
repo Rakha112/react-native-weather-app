@@ -2,7 +2,6 @@ import {
   StyleSheet,
   Text,
   View,
-  StatusBar,
   Image,
   useWindowDimensions,
   Pressable,
@@ -22,7 +21,7 @@ import dayjs from 'dayjs';
 import getImage from '../utilities/getImage';
 import Card from '../components/Card';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import Animated, {FadeOutLeft, FadeInRight} from 'react-native-reanimated';
+import Animated, {FadeOut, FadeInRight} from 'react-native-reanimated';
 import Search from '../components/Search';
 const Home = ({toast}) => {
   const insets = useSafeAreaInsets();
@@ -189,15 +188,8 @@ const Home = ({toast}) => {
     <SafeAreaView
       style={loading ? styles.containerLoader : styles.container}
       edges={['top']}>
-      <StatusBar
-        backgroundColor="transparent"
-        translucent={true}
-        barStyle="dark-content"
-      />
       {loading ? (
-        <Animated.View
-          style={styles.loader}
-          exiting={FadeOutLeft.duration(500)}>
+        <Animated.View style={styles.loader} exiting={FadeOut.duration(500)}>
           <ActivityIndicator size={'large'} color={'#C4E2FE'} />
         </Animated.View>
       ) : (
