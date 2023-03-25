@@ -15,7 +15,7 @@ const NextDay = ({route}) => {
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <Carousel data={dailyWeather} autoPlay={false} pagination={true} />
+      <Carousel data={dailyWeather} autoPlay={true} pagination={true} />
       {dailyWeather.slice(1).map((item, index) => {
         return (
           <View key={index} style={styles.listContainer}>
