@@ -40,7 +40,7 @@ const Carousel = ({data, autoPlay, pagination}) => {
           _offSet = Math.floor(_offSet + SIZE);
         }
         scrollViewRef.current.scrollTo({x: _offSet, y: 0});
-      }, 2000);
+      }, 4000);
     } else {
       clearInterval(interval.current);
     }
