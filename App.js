@@ -64,7 +64,11 @@ const App = () => {
             name="NextDay"
             component={NextDay}
             options={{
-              headerShown: false,
+              title: 'Next 7 Days',
+              headerStyle: {
+                backgroundColor: '#C4E2FE',
+              },
+              headerTintColor: '#505A7D',
               cardStyleInterpolator: customTransition,
               transitionSpec: {
                 close: {animation: 'timing', config: {duration: 500}},
