@@ -69,7 +69,7 @@ const Home = ({toast}) => {
 
   useLayoutEffect(() => {
     if (!loading) {
-      changeNavigationBarColor('#FFFFFF');
+      changeNavigationBarColor('#FFFFFF', true);
     }
   }, [loading]);
 
