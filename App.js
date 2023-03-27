@@ -8,6 +8,7 @@ import Home from './src/screen/Home';
 import NextDay from './src/screen/NextDay';
 import Toast from './src/components/Toast';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import RNBootSplash from 'react-native-bootsplash';
 const App = () => {
   const toastRef = useRef(null);
   const Stack = createStackNavigator();
@@ -19,7 +20,8 @@ const App = () => {
         translucent={true}
         barStyle="dark-content"
       />
-      <NavigationContainer>
+      <NavigationContainer
+        onReady={() => RNBootSplash.hide({fade: true, duration: 500})}>
         <Stack.Navigator initialRouteName="Onboarding">
           <Stack.Screen
             name="Onboarding"
