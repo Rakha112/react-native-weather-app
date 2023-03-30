@@ -4,6 +4,7 @@ import changeNavigationBarColor from 'react-native-navigation-bar-color';
 import Carousel from '../components/Carousel';
 import dayjs from 'dayjs';
 import getImage from '../utilities/getImage';
+import {SafeAreaView} from 'react-native-safe-area-context';
 const NextDay = ({route}) => {
   const {dailyWeather} = route.params;
   useEffect(() => {
@@ -14,32 +15,34 @@ const NextDay = ({route}) => {
   }, []);
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <Carousel data={dailyWeather} autoPlay={true} pagination={true} />
-      {dailyWeather.slice(1).map((item, index) => {
-        return (
-          <View key={index} style={styles.listContainer}>
-            <Text style={styles.textDay}>
-              {dayjs(item.dt * 1000).format('dddd')}
-            </Text>
-            <View style={styles.weatherContainer}>
-              <View style={styles.center}>
-                <Text style={styles.textTemp}>Min</Text>
-                <Text style={styles.textTemp}>{item.temp.min}&deg;C</Text>
-              </View>
-              <Image
-                source={getImage[item.weather[0].icon]}
-                style={styles.weatherIcon}
-              />
-              <View style={styles.center}>
-                <Text style={styles.textTemp}>Max</Text>
-                <Text style={styles.textTemp}>{item.temp.max}&deg;C</Text>
+    <SafeAreaView style={styles.container} edges={['bottom']}>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <Carousel data={dailyWeather} autoPlay={true} pagination={true} />
+        {dailyWeather.slice(1).map((item, index) => {
+          return (
+            <View key={index} style={styles.listContainer}>
+              <Text style={styles.textDay}>
+                {dayjs(item.dt * 1000).format('dddd')}
+              </Text>
+              <View style={styles.weatherContainer}>
+                <View style={styles.center}>
+                  <Text style={styles.textTemp}>Min</Text>
+                  <Text style={styles.textTemp}>{item.temp.min}&deg;C</Text>
+                </View>
+                <Image
+                  source={getImage[item.weather[0].icon]}
+                  style={styles.weatherIcon}
+                />
+                <View style={styles.center}>
+                  <Text style={styles.textTemp}>Max</Text>
+                  <Text style={styles.textTemp}>{item.temp.max}&deg;C</Text>
+                </View>
               </View>
             </View>
-          </View>
-        );
-      })}
-    </ScrollView>
+          );
+        })}
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
