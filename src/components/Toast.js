@@ -22,7 +22,7 @@ const Toast = forwardRef(({}, ref) => {
   const [toastType, setToastType] = useState('success');
   const [toastText, setToastText] = useState('');
   const [toastDuration, setToastDuration] = useState(0);
-  const TOP_VALUE = Platform.OS === 'ios' ? 60 : 40;
+  const TOP_VALUE = Platform.OS === 'ios' ? 60 : 20;
   useImperativeHandle(
     ref,
     () => ({
