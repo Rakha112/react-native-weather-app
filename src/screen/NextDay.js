@@ -1,18 +1,11 @@
 import {StyleSheet, Text, View, ScrollView, Image} from 'react-native';
-import React, {useEffect} from 'react';
-import changeNavigationBarColor from 'react-native-navigation-bar-color';
+import React from 'react';
 import Carousel from '../components/Carousel';
 import dayjs from 'dayjs';
 import getImage from '../utilities/getImage';
 import {SafeAreaView} from 'react-native-safe-area-context';
 const NextDay = ({route}) => {
   const {dailyWeather} = route.params;
-  useEffect(() => {
-    changeNavigationBarColor('#C4E2FE', true);
-    return () => {
-      changeNavigationBarColor('#FFFFFF', true);
-    };
-  }, []);
 
   return (
     <SafeAreaView style={styles.container} edges={['bottom']}>

@@ -10,20 +10,17 @@ import {
   RefreshControl,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import React, {useEffect, useLayoutEffect, useState, useCallback} from 'react';
+import React, {useEffect, useState, useCallback} from 'react';
 import Geolocation from 'react-native-geolocation-service';
 import axios from 'axios';
-import changeNavigationBarColor from 'react-native-navigation-bar-color';
 import {OPENWEATHER_KEY, HEREMAP_KEY} from '@env';
 import {useNavigation} from '@react-navigation/native';
 import dayjs from 'dayjs';
 import getImage from '../utilities/getImage';
 import Card from '../components/Card';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Animated, {FadeOut, SlideInRight} from 'react-native-reanimated';
 import Search from '../components/Search';
 const Home = ({toast}) => {
-  const insets = useSafeAreaInsets();
   const currentDate = dayjs().format('dddd, DD MMMM YYYY');
   const navigation = useNavigation();
   const {width} = useWindowDimensions();
@@ -66,12 +63,6 @@ const Home = ({toast}) => {
       {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
     );
   }, []);
-
-  useLayoutEffect(() => {
-    if (!loading) {
-      changeNavigationBarColor('#FFFFFF', true);
-    }
-  }, [loading]);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -152,9 +143,7 @@ const Home = ({toast}) => {
     }
   };
   return (
-    <SafeAreaView
-      style={loading ? styles.containerLoader : styles.container}
-      edges={['top']}>
+    <SafeAreaView style={loading ? styles.containerLoader : styles.container}>
       {loading ? (
         <Animated.View style={styles.loader} exiting={FadeOut.duration(500)}>
           <ActivityIndicator size={'large'} color={'#C4E2FE'} />
@@ -209,11 +198,7 @@ const Home = ({toast}) => {
               </View>
             </View>
           </View>
-          <View
-            style={[
-              styles.bottomContainer,
-              {width: width, paddingBottom: insets.bottom},
-            ]}>
+          <View style={[styles.bottomContainer, {width: width}]}>
             <View style={styles.wrapper}>
               <Text style={styles.text}>Today</Text>
               <Pressable

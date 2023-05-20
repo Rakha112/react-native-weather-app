@@ -21,6 +21,7 @@ export default Card;
 
 const styles = StyleSheet.create({
   container: {
+    height: 120,
     width: 100,
     backgroundColor: '#C4E2FE',
     marginHorizontal: 10,

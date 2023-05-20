@@ -9,19 +9,14 @@ import {
   Platform,
   Image,
 } from 'react-native';
-import React, {useLayoutEffect} from 'react';
+import React from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import changeNavigationBarColor from 'react-native-navigation-bar-color';
 import Button from '../components/Button';
 import {useNavigation} from '@react-navigation/native';
 import Geolocation from 'react-native-geolocation-service';
 const Onboarding = () => {
   const {width, height} = useWindowDimensions();
   const navigation = useNavigation();
-
-  useLayoutEffect(() => {
-    changeNavigationBarColor('#C4E2FE', true, false);
-  }, []);
 
   const pressHandler = async () => {
     if (Platform.OS === 'android') {
